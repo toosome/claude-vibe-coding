@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>精读工作台 · 雅思句子成分精读</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link rel="stylesheet" href="../assets/common.css">
+<style>
+  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #F1F5F9; color: #0c1d2e; }
+  ::-webkit-scrollbar { display: none; }
+
+  /* PRD §5.3 配色 */
+  .comp { padding: 1px 4px; border-radius: 3px; cursor: help; position: relative; transition: filter 0.15s; }
+  .comp:hover { filter: brightness(0.95); }
+  .comp[data-type="S"]    { background: #D6EAF8; color: #1B4F72; }
+  .comp[data-type="V"]    { background: #FADBD8; color: #78281F; }
+  .comp[data-type="O"]    { background: #D5F5E3; color: #196F3D; }
+  .comp[data-type="P"]    { background: #FDEBD0; color: #7E5109; }
+  .comp[data-type="OC"]   { background: #D1F2EB; color: #117864; }
+  .comp[data-type="Attr"] { background: #FCF3CF; color: #7D6608; }
+  .comp[data-type="Adv"]  { background: #E8DAEF; color: #512E5F; }
+  .comp[data-type="App"]  { background: #FADBD8; }
+  .comp[data-type="Par"]  { background: #F2D7D5; }
+  .comp[data-type="Conj"] { background: #E5E7E9; color: #475569; border-bottom: 1px solid #6b7280; }
+  .comp[data-type="Prep"] { background: transparent; border-bottom: 1px dashed #6b7280; }
+
+  /* 文章元信息卡片 */
+  .article-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .article-card .meta {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 11px; color: #94a3b8; font-weight: 600;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .article-card .badge {
+    background: #003857; color: #fff;
+    padding: 2px 8px; border-radius: 4px; font-size: 10px;
+  }
+  .article-card h1 {
+    font-size: 22px; font-weight: 600; color: #003857;
+    margin-bottom: 4px;
+  }
+  .article-card .subtitle {
+    font-size: 13px; color: #41474e;
+  }
+
+  /* 阅读区 */
+  .reader {
+    background: #fff;
+    border-radius: 12px;
+    padding: 28px 32px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    line-height: 1.95;
+    font-size: 17px;
+    max-width: 720px;
+    margin: 0 auto 100px;
+  }
+  .reader .paragraph { margin-bottom: 24px; }
+  .reader .paragraph:last-child { margin-bottom: 0; }
+
+  /* 句子状态 */
+  .sentence { padding: 2px 0; transition: background 0.2s; }
+  .sentence.unread { color: rgba(12, 29, 46, 0.35); }
+  .sentence.read { color: rgba(12, 29, 46, 0.65); }
+  .sentence.current {
+    background: #fff8c5;
+    box-shadow: 0 0 0 2px #fde68a;
+    border-radius: 6px;
+    padding: 2px 4px;
+    margin: 0 -4px;
+  }
+  .sentence.current::before { content: "▸"; color: #003857; margin-right: 2px; font-weight: bold; }
+
+  /* v1.0.1 hotfix：默认「单句模式」，仅当前句显示成分标注；切到「全文模式」才全部显示 */
+  .solo-mode .sentence:not(.current) .comp {
+    background: transparent !important;
+    border-bottom: none !important;
+    color: inherit;
+  }
+
+  .translation {
+    display: none;
+    margin-top: 8px;
+    padding: 10px 14px;
+    background: #f8fafc;
+    border-left: 3px solid #E8DAEF;
+    border-radius: 0 6px 6px 0;
+    font-size: 14px;
+    color: #374151;
+    line-height: 1.7;
+  }
+  .sentence.current .translation { display: block; }
+
+  .grammar-hint {
+    display: none;
+    margin-top: 6px;
+    font-size: 12px;
+    color: #41474e;
+    padding: 6px 10px;
+    background: #f1f5f9;
+    border-radius: 4px;
+  }
+  .sentence.current .grammar-hint { display: block; }
+
+  .star {
+    display: inline-block;
+    margin: 0 2px;
+    font-size: 14px;
+    cursor: pointer;
+    color: #cbd5e1;
+    user-select: none;
+    vertical-align: middle;
+  }
+  .star:hover { transform: scale(1.2); }
+  .star.on { color: #f59e0b; }
+
+  /* 桌面端布局：阅读 + 右侧图例栏 */
+  .layout {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 24px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .sidebar {
+    display: none;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  @media (min-width: 1024px) {
+    .layout { grid-template-columns: minmax(0, 1fr) 280px; }
+    .sidebar { display: flex; }
+  }
+
+  /* 图例 */
+  .legend {
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .legend h3 {
+    font-size: 12px; color: #94a3b8;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    font-weight: 600; margin-bottom: 12px;
+  }
+  .legend-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 4px 6px; border-radius: 6px;
+    font-size: 13px; cursor: pointer;
+    user-select: none;
+  }
+  .legend-item:hover { background: #f8fafc; }
+  .legend-item.off { opacity: 0.4; }
+  .legend-item .swatch {
+    width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0;
+    border: 1px solid rgba(0,0,0,0.06);
+  }
+
+  /* 控件面板 */
+  .controls {
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .controls h3 {
+    font-size: 12px; color: #94a3b8;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    font-weight: 600; margin-bottom: 12px;
+  }
+  .controls .btn-row {
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .ctrl-btn {
+    padding: 8px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #fff;
+    font-size: 13px; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .ctrl-btn:hover { background: #f8fafc; }
+  .ctrl-btn.active { background: #003857; color: #fff; border-color: #003857; }
+
+  /* 移动端底部控制条 */
+  .bottombar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid #e2e8f0;
+    padding: 10px 12px;
+    display: flex; gap: 8px; justify-content: center;
+    z-index: 30;
+  }
+  .bottombar button {
+    padding: 8px 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #fff;
+    font-size: 13px; cursor: pointer;
+  }
+  .bottombar button.primary { background: #003857; color: #fff; border-color: #003857; }
+  @media (min-width: 1024px) {
+    .bottombar { display: none; }
+  }
+
+  /* Tooltip */
+  .tooltip {
+    position: fixed; z-index: 100;
+    background: #0c1d2e; color: #fff;
+    padding: 8px 12px; border-radius: 8px;
+    font-size: 13px; line-height: 1.5;
+    max-width: 280px;
+    pointer-events: none;
+    display: none;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  }
+  .tooltip.show { display: block; }
+  .tooltip .lab { font-weight: 600; }
+  .tooltip .note { opacity: 0.85; font-size: 12px; margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <!-- 主阅读区 -->
+  <main>
+    <div class="article-card" id="articleCard">
+      <div class="meta">
+        <span class="badge">DEMO</span>
+        <span>自撰 · IELTS 风格 · 城市农业与食品安全</span>
+      </div>
+      <h1 id="articleTitle">城市农业与食品安全</h1>
+      <div class="subtitle">预置示范文章 · 2 段 10 句 · 逐句点读体验</div>
+    </div>
+
+    <div class="reader" id="reader">
+      <!-- 由 JS 渲染 -->
+    </div>
+  </main>
+
+  <!-- 桌面端右侧栏 -->
+  <aside class="sidebar">
+    <section class="legend">
+      <h3>成分图例 · 点击切换</h3>
+      <div class="legend-grid" id="legendGrid"></div>
+    </section>
+    <section class="controls">
+      <h3>视图控制</h3>
+      <div class="btn-row">
+        <button class="ctrl-btn" id="toggleAnnotationScope">标注：单句</button>
+        <button class="ctrl-btn" id="toggleAllTrans">展开所有译文</button>
+      </div>
+    </section>
+  </aside>
+</div>
+
+<!-- 移动端底部控制条 -->
+<div class="bottombar">
+  <button id="prevBtn">← 上一句</button>
+  <button class="primary" id="nextBtn">下一句 →</button>
+  <button id="translateBtn">译</button>
+  <button id="favoriteBtn">☆</button>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script src="../assets/common.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  // ============================================================
+  // 共享：PRD §5.3 成分配色
+  // ============================================================
+  const LEGEND = [
+    { type: 'S',    label: '主语',     swatch: '#D6EAF8' },
+    { type: 'V',    label: '谓语',     swatch: '#FADBD8' },
+    { type: 'O',    label: '宾语',     swatch: '#D5F5E3' },
+    { type: 'P',    label: '表语',     swatch: '#FDEBD0' },
+    { type: 'OC',   label: '宾语补足语', swatch: '#D1F2EB' },
+    { type: 'Attr', label: '定语',     swatch: '#FCF3CF' },
+    { type: 'Adv',  label: '状语',     swatch: '#E8DAEF' },
+    { type: 'App',  label: '同位语',   swatch: '#FADBD8' },
+    { type: 'Par',  label: '插入语',   swatch: '#F2D7D5' },
+    { type: 'Conj', label: '连接词',   swatch: '#E5E7E9' },
+    { type: 'Prep', label: '介词短语', swatch: 'transparent' },
+    { type: 'Inf',  label: '不定式',   swatch: '#D6DBFA' },
+    { type: 'Ger',  label: '动名词',   swatch: '#D6DBFA' },
+    { type: 'Part', label: '分词',     swatch: '#D6DBFA' }
+  ];
+
+  // ============================================================
+  // 数据：1 篇示范文章（自撰，规避版权风险，PRD §7.1）
+  // ============================================================
+  const ARTICLE = {
+    title: '城市农业与食品安全',
+    paragraphs: [
+      {
+        sentences: [
+          {
+            text: 'Urban agriculture, which involves cultivating food within city limits, has attracted considerable interest in recent years.',
+            translation: '城市农业，即在城市范围内种植食物，近年来引起了相当大的关注。',
+            hint: '主句：Urban agriculture（S）has attracted（V）considerable interest（O）；which... 为非限制性定语从句修饰主语。',
+            components: [
+              { type: 'S',    text: 'Urban agriculture' },
+              { type: 'Attr', text: 'which involves cultivating food within city limits' },
+              { type: 'V',    text: 'has attracted' },
+              { type: 'O',    text: 'considerable interest' },
+              { type: 'Adv',  text: 'in recent years' }
+            ]
+          },
+          {
+            text: 'Supporters argue that growing food locally can substantially reduce the carbon footprint of long-distance transportation.',
+            translation: '支持者认为，本地种植食物能大幅减少长途运输的碳足迹。',
+            hint: '主句：Supporters（S）argue（V）that...（O 宾语从句）；从句内：growing food locally（Ger 主语）can reduce（V）the carbon footprint（O）。',
+            components: [
+              { type: 'S',  text: 'Supporters' },
+              { type: 'V',  text: 'argue' },
+              { type: 'O',  text: 'that growing food locally can substantially reduce the carbon footprint of long-distance transportation' }
+            ]
+          },
+          {
+            text: 'Critics, however, point out that agricultural activities may compete with residential development for limited urban land.',
+            translation: '然而，批评者指出，农业活动可能会与住宅开发争夺有限的城市土地。',
+            hint: 'Par 插入语 however；S Critics；V point out；O 为 that 引导的宾语从句。',
+            components: [
+              { type: 'Par', text: 'however' },
+              { type: 'S',   text: 'Critics' },
+              { type: 'V',   text: 'point out' },
+              { type: 'O',   text: 'that agricultural activities may compete with residential development for limited urban land' }
+            ]
+          },
+          {
+            text: 'Some cities have therefore introduced strict regulations to ensure that urban farming remains safe and sustainable.',
+            translation: '因此，一些城市出台了严格的法规，以确保城市农业保持安全与可持续。',
+            hint: 'Adv therefore；S Some cities；V have introduced；O strict regulations；含不定式 to ensure that... 作后置定语。',
+            components: [
+              { type: 'Adv', text: 'therefore' },
+              { type: 'S',   text: 'Some cities' },
+              { type: 'V',   text: 'have therefore introduced' },
+              { type: 'O',   text: 'strict regulations to ensure that urban farming remains safe and sustainable' }
+            ]
+          }
+        ]
+      },
+      {
+        sentences: [
+          {
+            text: 'Singapore, for example, has invested heavily in vertical farms that use hydroponic technology to produce crops efficiently.',
+            translation: '例如，新加坡已大力投资于采用水培技术高效生产作物的垂直农场。',
+            hint: 'Par for example；S Singapore；V has invested；Adv heavily；定语从句 that use... 修饰 farms。',
+            components: [
+              { type: 'Par', text: 'for example' },
+              { type: 'S',   text: 'Singapore' },
+              { type: 'V',   text: 'has invested' },
+              { type: 'Adv', text: 'heavily in vertical farms that use hydroponic technology to produce crops efficiently' }
+            ]
+          },
+          {
+            text: 'These innovative systems, which can operate year-round regardless of weather, demonstrate the potential of technology-driven agriculture.',
+            translation: '这些创新系统无论天气如何都能全年运作，展现了技术驱动型农业的潜力。',
+            hint: 'S These innovative systems；非限制性定语从句 which can operate... 修饰主语；V demonstrate；O the potential of...。',
+            components: [
+              { type: 'S',    text: 'These innovative systems' },
+              { type: 'Attr', text: 'which can operate year-round regardless of weather' },
+              { type: 'V',    text: 'demonstrate' },
+              { type: 'O',    text: 'the potential of technology-driven agriculture' }
+            ]
+          },
+          {
+            text: 'Soil contamination from previous industrial use also raises serious concerns about food safety.',
+            translation: '先前工业用途造成的土壤污染也引发了人们对食品安全的严重担忧。',
+            hint: 'S Soil contamination from previous industrial use（含介词短语作后置定语）；V also raises；O serious concerns about food safety。',
+            components: [
+              { type: 'S', text: 'Soil contamination from previous industrial use' },
+              { type: 'V', text: 'also raises' },
+              { type: 'O', text: 'serious concerns about food safety' }
+            ]
+          },
+          {
+            text: 'Some researchers have called for stricter standards so that food produced in cities meets national safety requirements.',
+            translation: '一些研究者呼吁制定更严格的标准，使城市生产的食物符合国家食品安全要求。',
+            hint: 'S Some researchers；V have called for；O stricter standards；结果状语从句 so that...。',
+            components: [
+              { type: 'S',   text: 'Some researchers' },
+              { type: 'V',   text: 'have called for' },
+              { type: 'O',   text: 'stricter standards' },
+              { type: 'Adv', text: 'so that food produced in cities meets national safety requirements' }
+            ]
+          },
+          {
+            text: 'Additionally, community gardens provide urban residents with direct access to fresh, nutritious produce.',
+            translation: '此外，社区花园为城市居民提供了直接获取新鲜营养农产品的渠道。',
+            hint: 'Adv Additionally；S community gardens；V provide；O urban residents with direct access to fresh, nutritious produce。',
+            components: [
+              { type: 'Adv', text: 'Additionally' },
+              { type: 'S',   text: 'community gardens' },
+              { type: 'V',   text: 'provide' },
+              { type: 'O',   text: 'urban residents with direct access to fresh, nutritious produce' }
+            ]
+          },
+          {
+            text: 'If governments continue to support such innovations, urban agriculture may well play a central role in future food systems.',
+            translation: '如果各国政府继续支持此类创新，城市农业很可能在未来食物系统中扮演核心角色。',
+            hint: 'If 引导条件状语从句；主句 S urban agriculture；V may well play；O a central role in future food systems。',
+            components: [
+              { type: 'Adv', text: 'If governments continue to support such innovations' },
+              { type: 'S',   text: 'urban agriculture' },
+              { type: 'V',   text: 'may well play' },
+              { type: 'O',   text: 'a central role in future food systems' }
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  // ============================================================
+  // 状态
+  // ============================================================
+  const LS_FAVS = 'ielts-reader-favs';
+  const LS_PREFS = 'ielts-reader-prefs';
+  const state = {
+    sentences: [],
+    currentIdx: 0,
+    soloMode: true,                          // v1.0.1 hotfix: 默认仅当前句显示成分
+    disabledTypes: new Set(),
+    favorites: new Set(JSON.parse(localStorage.getItem(LS_FAVS) || '[]'))
+  };
+
+  function flatten() {
+    const arr = [];
+    ARTICLE.paragraphs.forEach(p => p.sentences.forEach(s => arr.push(s)));
+    return arr;
+  }
+
+  // 区间计算：每个 component.text 必须在 sentence.text 里能找到
+  function annotate(s) {
+    const text = s.text;
+    const ranges = [];
+    for (const c of s.components) {
+      let from = 0, found = -1;
+      while (true) {
+        const idx = text.indexOf(c.text, from);
+        if (idx === -1) break;
+        const end = idx + c.text.length;
+        const overlaps = ranges.some(r => end > r.start && idx < r.end);
+        if (!overlaps) { found = idx; break; }
+        from = idx + 1;
+      }
+      if (found !== -1) ranges.push({ ...c, start: found, end: found + c.text.length });
+    }
+    ranges.sort((a, b) => a.start - b.start);
+    const parts = [];
+    let pos = 0;
+    for (const r of ranges) {
+      if (r.start > pos) parts.push({ type: null, text: text.slice(pos, r.start) });
+      parts.push({ type: r.type, text: text.slice(r.start, r.end), label: c_label(r.type) });
+      pos = r.end;
+    }
+    if (pos < text.length) parts.push({ type: null, text: text.slice(pos) });
+    return parts;
+  }
+  function c_label(t) {
+    const m = LEGEND.find(l => l.type === t);
+    return m ? m.label : t;
+  }
+
+  function renderReader() {
+    const root = document.getElementById('reader');
+    root.innerHTML = '';
+    ARTICLE.paragraphs.forEach((p, pi) => {
+      const pEl = document.createElement('div');
+      pEl.className = 'paragraph';
+      p.sentences.forEach(s => {
+        const idx = state.sentences.indexOf(s);
+        const status = idx < state.currentIdx ? 'read' : (idx === state.currentIdx ? 'current' : 'unread');
+        pEl.appendChild(renderSentence(s, status));
+        pEl.appendChild(document.createTextNode(' '));
+      });
+      root.appendChild(pEl);
+    });
+  }
+
+  function renderSentence(s, status) {
+    const wrap = document.createElement('span');
+    wrap.className = 'sentence ' + status;
+    const parts = annotate(s);
+    parts.forEach(p => {
+      if (p.type === null) {
+        wrap.appendChild(document.createTextNode(p.text));
+      } else {
+        const c = document.createElement('span');
+        c.className = 'comp';
+        c.dataset.type = p.type;
+        c.textContent = p.text;
+        c.addEventListener('click', e => {
+          e.stopPropagation();
+          showTooltip(c, p);
+        });
+        wrap.appendChild(c);
+      }
+    });
+    // 收藏星
+    const star = document.createElement('span');
+    star.className = 'star' + (state.favorites.has(s.text) ? ' on' : '');
+    star.textContent = state.favorites.has(s.text) ? '★' : '☆';
+    star.addEventListener('click', e => {
+      e.stopPropagation();
+      toggleFav(s.text);
+    });
+    wrap.appendChild(star);
+    // 翻译 + 语法提示（仅当前句）
+    if (status === 'current') {
+      if (s.translation) {
+        const t = document.createElement('div');
+        t.className = 'translation';
+        t.textContent = s.translation;
+        wrap.appendChild(t);
+      }
+      if (s.hint) {
+        const g = document.createElement('div');
+        g.className = 'grammar-hint';
+        g.textContent = '💡 ' + s.hint;
+        wrap.appendChild(g);
+      }
+    }
+    // 点击切到当前句
+    wrap.addEventListener('click', () => {
+      const idx = state.sentences.indexOf(s);
+      if (idx !== -1) goTo(idx);
+    });
+    return wrap;
+  }
+
+  function renderLegend() {
+    const grid = document.getElementById('legendGrid');
+    grid.innerHTML = '';
+    LEGEND.forEach(c => {
+      const item = document.createElement('div');
+      item.className = 'legend-item' + (state.disabledTypes.has(c.type) ? ' off' : '');
+      item.innerHTML = `<span class="swatch" style="background:${c.swatch}"></span><span>${c.label}</span>`;
+      item.addEventListener('click', () => {
+        if (state.disabledTypes.has(c.type)) {
+          state.disabledTypes.delete(c.type);
+          item.classList.remove('off');
+        } else {
+          state.disabledTypes.add(c.type);
+          item.classList.add('off');
+        }
+        updateAppDisabled();
+      });
+      grid.appendChild(item);
+    });
+  }
+
+  function updateAppDisabled() {
+    document.body.setAttribute('data-disabled', Array.from(state.disabledTypes).join(' '));
+  }
+
+  function goTo(idx) {
+    if (idx < 0 || idx >= state.sentences.length) return;
+    state.currentIdx = idx;
+    saveProgress();
+    renderReader();
+    scrollCurrentIntoView();
+  }
+  function next() { goTo(state.currentIdx + 1); }
+  function prev() { goTo(state.currentIdx - 1); }
+
+  function scrollCurrentIntoView() {
+    const el = document.querySelector('.sentence.current');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function toggleFav(text) {
+    if (state.favorites.has(text)) state.favorites.delete(text);
+    else state.favorites.add(text);
+    localStorage.setItem(LS_FAVS, JSON.stringify(Array.from(state.favorites)));
+    renderReader();
+  }
+
+  // ============================================================
+  // Tooltip
+  // ============================================================
+  const tooltip = document.getElementById('tooltip');
+  function showTooltip(target, p) {
+    const lab = LEGEND.find(l => l.type === p.type);
+    tooltip.innerHTML = `<div class="lab">${lab ? lab.label : p.type} · ${p.type}</div>
+      <div class="note">点击空白处关闭</div>`;
+    tooltip.classList.add('show');
+    const rect = target.getBoundingClientRect();
+    const ttRect = tooltip.getBoundingClientRect();
+    let top = rect.top - ttRect.height - 8;
+    if (top < 8) top = rect.bottom + 8;
+    let left = rect.left + rect.width / 2 - ttRect.width / 2;
+    if (left < 8) left = 8;
+    if (left + ttRect.width > window.innerWidth - 8) left = window.innerWidth - ttRect.width - 8;
+    tooltip.style.top = top + 'px';
+    tooltip.style.left = left + 'px';
+  }
+  document.addEventListener('click', e => {
+    if (!tooltip.contains(e.target) && !e.target.classList.contains('comp')) {
+      tooltip.classList.remove('show');
+    }
+  });
+
+  // ============================================================
+  // 控件 + 持久化
+  // ============================================================
+  function saveProgress() {
+    try { localStorage.setItem('ielts-reader-progress', JSON.stringify({ currentIdx: state.currentIdx })); } catch (e) {}
+  }
+  function loadProgress() {
+    try {
+      const raw = localStorage.getItem('ielts-reader-progress');
+      if (!raw) return;
+      const p = JSON.parse(raw);
+      if (typeof p.currentIdx === 'number' && p.currentIdx < state.sentences.length) {
+        state.currentIdx = p.currentIdx;
+      }
+    } catch (e) {}
+  }
+
+  // v1.0.1 hotfix：单句模式 ↔ 全文模式
+  function applyAnnotationScope() {
+    document.body.classList.toggle('solo-mode', state.soloMode);
+    const btn = document.getElementById('toggleAnnotationScope');
+    btn.textContent = state.soloMode ? '标注：单句' : '标注：全文';
+  }
+
+  function toggleAnnotationScope() {
+    state.soloMode = !state.soloMode;
+    applyAnnotationScope();
+    savePrefs();
+  }
+
+  function savePrefs() {
+    try {
+      localStorage.setItem(LS_PREFS, JSON.stringify({ soloMode: state.soloMode }));
+    } catch (e) {}
+  }
+
+  function loadPrefs() {
+    try {
+      const raw = localStorage.getItem(LS_PREFS);
+      if (!raw) return;
+      const p = JSON.parse(raw);
+      if (typeof p.soloMode === 'boolean') state.soloMode = p.soloMode;
+    } catch (e) {}
+  }
+
+  function toggleAllTrans() {
+    document.querySelectorAll('.sentence').forEach(el => {
+      const t = el.querySelector('.translation');
+      if (t) t.style.display = (el.classList.contains('current') ? '' : 'block');
+    });
+    document.getElementById('toggleAllTrans').textContent = '收起所有译文';
+  }
+
+  function bind() {
+    document.getElementById('nextBtn').addEventListener('click', next);
+    document.getElementById('prevBtn').addEventListener('click', prev);
+    document.getElementById('translateBtn').addEventListener('click', () => {
+      const el = document.querySelector('.sentence.current');
+      if (!el) return;
+      const t = el.querySelector('.translation');
+      if (t) t.style.display = t.style.display === 'none' ? 'block' : 'none';
+    });
+    document.getElementById('favoriteBtn').addEventListener('click', () => {
+      const cur = state.sentences[state.currentIdx];
+      if (cur) toggleFav(cur.text);
+    });
+    document.getElementById('toggleAnnotationScope').addEventListener('click', toggleAnnotationScope);
+    document.getElementById('toggleAllTrans').addEventListener('click', toggleAllTrans);
+
+    document.addEventListener('keydown', e => {
+      if (e.key === ' ') { e.preventDefault(); next(); }
+      else if (e.key === 'ArrowRight') next();
+      else if (e.key === 'ArrowLeft') prev();
+    });
+  }
+
+  // ============================================================
+  // 启动
+  // ============================================================
+  function init() {
+    state.sentences = flatten();
+    loadProgress();
+    loadPrefs();                              // v1.0.1 hotfix: 恢复 soloMode
+    applyAnnotationScope();                   // v1.0.1 hotfix: 应用标注范围
+    renderLegend();
+    renderReader();
+    bind();
+    document.getElementById('articleTitle').textContent = ARTICLE.title;
+  }
+  init();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="zh-CN"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_blank" name="shell-type"/><title>Auth Modal - 雅思精读</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "secondary-fixed-dim": "#86d89b", "tertiary-fixed": "#ffdad5", "syntax-subject-fg": "#1B4F72", "syntax-adverbial-bg": "#E8DAEF", "surface-container-highest": "#d3e4fb", "primary": "#003857", "syntax-predicative-bg": "#FDEBD0", "syntax-attribute-fg": "#7D6608", "surface": "#f8f9ff", "surface-paper": "#F8FAFC", "on-tertiary-container": "#ffa497", "outline-variant": "#c1c7cf", "secondary-fixed": "#a2f5b6", "background": "#f8f9ff", "syntax-parenthetical-bg": "#F2D7D5", "on-primary-fixed": "#001e31", "syntax-predicative-fg": "#7E5109", "tertiary": "#651a12", "syntax-connective-fg": "#475569", "inverse-surface": "#223243", "on-primary-container": "#92c0e9", "surface-card": "#FFFFFF", "on-primary-fixed-variant": "#154b6d", "syntax-attribute-bg": "#FCF3CF", "primary-container": "#1b4f72", "surface-dim": "#cbdbf3", "primary-fixed-dim": "#9dcbf4", "on-surface": "#0c1d2e", "syntax-object-bg": "#D5F5E3", "syntax-predicate-bg": "#FADBD8", "surface-variant": "#d3e4fb", "on-secondary-fixed": "#00210d", "surface-canvas": "#F1F5F9", "secondary-container": "#9ff2b3", "surface-container": "#e4efff", "on-error": "#ffffff", "tertiary-fixed-dim": "#ffb4a9", "inverse-primary": "#9dcbf4", "on-primary": "#ffffff", "syntax-object-fg": "#196F3D", "on-tertiary": "#ffffff", "on-surface-variant": "#41474e", "on-tertiary-fixed": "#410101", "error": "#ba1a1a", "syntax-adverbial-fg": "#512E5F", "syntax-appositive-bg": "#FADBD8", "syntax-subject-bg": "#D6EAF8", "inverse-on-surface": "#e9f1ff", "text-muted": "#94A3B8", "primary-fixed": "#cce5ff", "surface-bright": "#f8f9ff", "border-subtle": "#E2E8F0", "surface-container-lowest": "#ffffff", "on-secondary": "#ffffff", "on-background": "#0c1d2e", "error-container": "#ffdad6", "syntax-complement-fg": "#117864", "surface-tint": "#326286", "on-error-container": "#93000a", "surface-container-low": "#eef4ff", "on-secondary-fixed-variant": "#005229", "text-primary": "#0F172A", "on-secondary-container": "#1b713e", "tertiary-container": "#833026", "syntax-predicate-fg": "#78281F", "syntax-complement-bg": "#D1F2EB", "secondary": "#156c3b", "surface-container-high": "#dae9ff", "on-tertiary-fixed-variant": "#7d2c22", "outline": "#72787f", "syntax-connective-bg": "#E5E7E9" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-sm": "0.5rem", "space-lg": "1.5rem", "space-xl": "2rem", "gutter": "1rem", "margin": "1rem", "space-xs": "0.25rem", "margin-desktop": "2rem", "gutter-desktop": "1.5rem", "space-md": "1rem" }, "fontFamily": { "caption": ["Inter"], "label-tag": ["Inter"], "body-reading-lg": ["Inter"], "headline-lg-mobile": ["Inter"], "label-ui": ["Inter"], "body-secondary": ["Inter"], "headline-md": ["Inter"], "headline-lg": ["Inter"], "body-reading-md": ["Inter"], "body-ui": ["Inter"] }, "fontSize": { "caption": ["0.75rem", {"lineHeight": "1rem", "fontWeight": "500"}], "label-tag": ["0.6875rem", {"lineHeight": "0.875rem", "letterSpacing": "0.025em", "fontWeight": "700"}], "body-reading-lg": ["1.1875rem", {"lineHeight": "2.125rem", "fontWeight": "400"}], "headline-lg-mobile": ["1.375rem", {"lineHeight": "1.875rem", "fontWeight": "700"}], "label-ui": ["0.8125rem", {"lineHeight": "1.125rem", "fontWeight": "600"}], "body-secondary": ["0.875rem", {"lineHeight": "1.375rem", "fontWeight": "400"}], "headline-md": ["1.25rem", {"lineHeight": "1.75rem", "fontWeight": "600"}], "headline-lg": ["1.75rem", {"lineHeight": "2.25rem", "fontWeight": "700"}], "body-reading-md": ["1.0625rem", {"lineHeight": "1.875rem", "fontWeight": "400"}], "body-ui": ["0.9375rem", {"lineHeight": "1.5rem", "fontWeight": "400"}] } } } }</script><style>@layer base{html,body{width:100vw;min-height:100%;margin:0;padding:0;}body{overscroll-behavior-y:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style></head><body class="bg-surface text-on-surface font-body-ui text-body-ui antialiased flex flex-col min-h-screen relative pt-safe pb-safe selection:bg-primary-fixed selection:text-on-primary-fixed"><main class="flex-1 flex flex-col relative w-full bg-surface"><div class="flex flex-col w-full px-gutter pb-space-xl">
+<!-- Interactive Toast Notification Container -->
+<div class="fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 opacity-0 pointer-events-none transform -translate-y-2 max-w-sm w-11/12" id="syncToast">
+<div class="bg-inverse-surface text-inverse-on-surface px-space-md py-space-sm rounded-lg shadow-xl flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-secondary-fixed text-body-reading-md">cloud_sync</span>
+<div class="flex flex-col flex-1 min-w-0">
+<span class="font-label-ui text-label-ui">本地数据已更新</span>
+<span class="font-caption text-caption text-surface-container-highest truncate" id="toastMessage">学习进度已自动同步至浏览器本地存储</span>
+</div>
+</div>
+</div>
+<!-- Main Card Surface (Layer 1 Modal / Card Flow) -->
+<div class="w-full max-w-md mx-auto mt-space-sm bg-surface-card rounded-xl shadow-md p-space-md flex flex-col gap-space-md">
+<!-- 1. Brand Showcase Header -->
+<div class="flex flex-col items-center text-center pt-space-xs">
+<div class="relative w-12 h-12 rounded-lg bg-surface-container-low flex items-center justify-center p-1.5 shadow-sm mb-space-sm">
+<img alt="雅思精读 Logo" class="w-full h-full object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UCwIme2bG_8MSoAA6pZbuILCif8TaN3S5yQvyAfbjoTwOFpC5Kbts0b1AkDvN8bbjvpwtAJVqkKgnsCiNJ70QhBjJxozk5jtddFiazAe4D8YpoTt4iFK9clwfA7WjpwttM1iYwCt_mZZSi1V_wX17kq3hcteDWNnFWHrInYRBFP8sJcxagx8wWB8winehlYAdxzebvmkj6qDbXpKjYFetmcC8o7rjeEsN6-Uzu8i6oAs0_Gw-ZUpNHrOwm"/>
+<span class="absolute -bottom-1 -right-1 flex h-3 w-3">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-3 w-3 bg-secondary"></span>
+</span>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">雅思句子成分精读 - 会员账号</h1>
+<p class="font-body-secondary text-body-secondary text-on-surface-variant mt-1">沉淀专属精读痕迹，跨会话保留进度</p>
+</div>
+<!-- 5. PRD §8.1.1 Local Demo Disclaimer Banner (High-vis scholarly callout) -->
+<div class="bg-syntax-attribute-bg text-syntax-attribute-fg p-space-sm rounded-lg shadow-sm flex items-start gap-space-xs">
+<span class="material-symbols-outlined text-headline-md flex-shrink-0 mt-0.5 text-syntax-predicative-fg" style="font-variation-settings: 'FILL' 1;">info</span>
+<div class="flex flex-col min-w-0">
+<span class="font-label-ui text-label-ui text-syntax-predicative-fg">演示环境规格声明</span>
+<p class="font-caption text-caption leading-relaxed mt-0.5 text-syntax-attribute-fg">
+          ⚠️ 提示：本工具为本地演示环境，账号与学习记录仅保存在本机浏览器中，完全离线可用；云端同步功能将在 v1.5 正式上线。
+        </p>
+</div>
+</div>
+<!-- 2. Segmented Pill Tab Switcher -->
+<div class="bg-surface-container-low p-1 rounded-lg flex items-center gap-1">
+<button class="flex-1 py-1.5 px-space-sm rounded text-center font-label-ui text-label-ui transition-all duration-200 bg-surface-card text-primary shadow-sm" id="tabLogin" onclick="switchAuthTab('login')" type="button">
+        用户登录
+      </button>
+<button class="flex-1 py-1.5 px-space-sm rounded text-center font-label-ui text-label-ui transition-all duration-200 text-on-surface-variant hover:text-on-surface" id="tabRegister" onclick="switchAuthTab('register')" type="button">
+        免费注册
+      </button>
+</div>
+<!-- 3. Form: Login Form (PRD §4.2.7.3) -->
+<form class="flex flex-col gap-space-sm" id="loginForm" onsubmit="handleLoginSubmit(event)">
+<div class="flex flex-col gap-1">
+<label class="font-label-ui text-label-ui text-on-surface flex items-center gap-1" for="loginEmail">
+<span class="material-symbols-outlined text-caption">mail</span>
+          登录邮箱
+        </label>
+<div class="relative">
+<input class="w-full bg-surface-container-low text-on-surface font-body-ui text-body-ui rounded-lg px-space-md py-2.5 focus:bg-surface-container-lowest focus:outline-none focus:shadow-md transition-all placeholder:text-text-muted" id="loginEmail" placeholder="如 student@ielts.org" required="" type="email" value="ielts_scholar@cambridge.edu"/>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-center">
+<label class="font-label-ui text-label-ui text-on-surface flex items-center gap-1" for="loginPassword">
+<span class="material-symbols-outlined text-caption">lock</span>
+            登录密码
+          </label>
+<button class="font-caption text-caption text-primary hover:underline" onclick="showLocalNotice('演示模式下无需重置，可任意输入或直接注册')" type="button">
+            忘记密码?
+          </button>
+</div>
+<div class="relative">
+<input class="w-full bg-surface-container-low text-on-surface font-body-ui text-body-ui rounded-lg px-space-md py-2.5 focus:bg-surface-container-lowest focus:outline-none focus:shadow-md transition-all placeholder:text-text-muted" id="loginPassword" minlength="6" placeholder="至少 6 位密码" required="" type="password" value="reading2024"/>
+</div>
+</div>
+<div class="hidden p-space-xs rounded bg-syntax-predicate-bg text-syntax-predicate-fg font-caption text-caption items-center gap-1" id="loginFeedback">
+<span class="material-symbols-outlined text-caption">error</span>
+<span id="loginFeedbackText">邮箱格式或密码不符合规范</span>
+</div>
+<button class="w-full mt-1 bg-primary text-on-primary py-2.5 px-space-md rounded-lg font-label-ui text-label-ui shadow-sm active:scale-[0.99] transition-transform flex items-center justify-center gap-1.5" type="submit">
+<span class="material-symbols-outlined text-label-ui">login</span>
+        立即登录
+      </button>
+<div class="text-center pt-1">
+<span class="font-body-secondary text-body-secondary text-on-surface-variant">还没有账号？</span>
+<button class="font-label-ui text-label-ui text-primary underline underline-offset-2 ml-1" onclick="switchAuthTab('register')" type="button">
+          立即注册
+        </button>
+</div>
+</form>
+<!-- 4. Form: Register Form (PRD §4.2.7.2) -->
+<form class="hidden flex flex-col gap-space-sm" id="registerForm" onsubmit="handleRegisterSubmit(event)">
+<div class="flex flex-col gap-1">
+<label class="font-label-ui text-label-ui text-on-surface flex items-center gap-1" for="regEmail">
+<span class="material-symbols-outlined text-caption">mail</span>
+          注册邮箱 <span class="text-error">*</span>
+</label>
+<input class="w-full bg-surface-container-low text-on-surface font-body-ui text-body-ui rounded-lg px-space-md py-2.5 focus:bg-surface-container-lowest focus:outline-none focus:shadow-md transition-all placeholder:text-text-muted" id="regEmail" placeholder="如 student@ielts.org" required="" type="email"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-ui text-label-ui text-on-surface flex items-center justify-between" for="regNickname">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-caption">badge</span>
+            读者昵称
+          </span>
+<span class="font-caption text-caption text-on-surface-variant font-normal">可选 (默认截取邮箱前缀)</span>
+</label>
+<input class="w-full bg-surface-container-low text-on-surface font-body-ui text-body-ui rounded-lg px-space-md py-2.5 focus:bg-surface-container-lowest focus:outline-none focus:shadow-md transition-all placeholder:text-text-muted" id="regNickname" placeholder="如 雅思9分学者" type="text"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-ui text-label-ui text-on-surface flex items-center gap-1" for="regPassword">
+<span class="material-symbols-outlined text-caption">lock</span>
+          密码 (≥6位) <span class="text-error">*</span>
+</label>
+<input class="w-full bg-surface-container-low text-on-surface font-body-ui text-body-ui rounded-lg px-space-md py-2.5 focus:bg-surface-container-lowest focus:outline-none focus:shadow-md transition-all placeholder:text-text-muted" id="regPassword" minlength="6" placeholder="输入安全密码 (不少于6位)" required="" type="password"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-ui text-label-ui text-on-surface flex items-center gap-1" for="regConfirmPassword">
+<span class="material-symbols-outlined text-caption">verified_user</span>
+          确认密码 <span class="text-error">*</span>
+</label>
+<input class="w-full bg-surface-container-low text-on-surface font-body-ui text-body-ui rounded-lg px-space-md py-2.5 focus:bg-surface-container-lowest focus:outline-none focus:shadow-md transition-all placeholder:text-text-muted" id="regConfirmPassword" minlength="6" placeholder="再次确认密码" required="" type="password"/>
+</div>
+<!-- Real-time Validation Message Banner -->
+<div class="hidden p-space-xs rounded bg-syntax-predicate-bg text-syntax-predicate-fg font-caption text-caption flex items-center gap-1" id="regFeedback">
+<span class="material-symbols-outlined text-caption">info</span>
+<span id="regFeedbackText">两次输入的密码不一致</span>
+</div>
+<button class="w-full mt-1 bg-primary text-on-primary py-2.5 px-space-md rounded-lg font-label-ui text-label-ui shadow-sm active:scale-[0.99] transition-transform flex items-center justify-center gap-1.5" type="submit">
+<span class="material-symbols-outlined text-label-ui">person_add</span>
+        完成注册并初始化本地空间
+      </button>
+<div class="text-center pt-1">
+<span class="font-body-secondary text-body-secondary text-on-surface-variant">已有学术账号？</span>
+<button class="font-label-ui text-label-ui text-primary underline underline-offset-2 ml-1" onclick="switchAuthTab('login')" type="button">
+          立即登录
+        </button>
+</div>
+</form>
+</div>
+<!-- 6. Logged-in State Simulation Section (PRD §4.2.7 Anchor Dropdown & Mock Profile) -->
+<div class="w-full max-w-md mx-auto mt-space-lg flex flex-col gap-space-sm">
+<div class="flex items-center justify-between px-1">
+<div class="flex items-center gap-1.5 text-on-surface-variant">
+<span class="material-symbols-outlined text-body-secondary">account_tree</span>
+<span class="font-label-ui text-label-ui">已登录会话态预览 (PRD Dropdown 模拟)</span>
+</div>
+<span class="font-caption text-caption bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded-full">
+        Mock Active
+      </span>
+</div>
+<!-- Active User Interactive Card with Dropdown Details -->
+<div class="bg-surface-card rounded-xl p-space-md shadow-sm flex flex-col gap-space-md">
+<!-- Profile Header Row with Dropdown Trigger -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-full bg-syntax-subject-bg text-syntax-subject-fg flex items-center justify-center font-label-ui text-body-ui shadow-sm flex-shrink-0">
+<span id="avatarLetter">I</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-label-ui text-label-ui text-on-surface truncate" id="activeUserName">ielts_scholar</span>
+<span class="material-symbols-outlined text-caption text-secondary" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<span class="font-caption text-caption text-text-muted truncate" id="activeUserEmail">ielts_scholar@cambridge.edu</span>
+</div>
+</div>
+<!-- Dropdown toggle button -->
+<button class="bg-surface-container-low hover:bg-surface-container text-on-surface px-2.5 py-1.5 rounded-lg font-caption text-caption flex items-center gap-1 transition-colors" onclick="toggleDropdownPanel()" type="button">
+<span>菜单</span>
+<span class="material-symbols-outlined text-caption transition-transform" id="dropdownIcon">expand_more</span>
+</button>
+</div>
+<!-- Expandable Mock Account Drawer / Dropdown Panel -->
+<div class="flex flex-col gap-space-sm pt-space-xs" id="accountDropdownPanel">
+<!-- Local Sync Status Box -->
+<div class="bg-surface-container-low p-space-sm rounded-lg flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-body-reading-md">cloud_done</span>
+<div class="flex flex-col">
+<span class="font-label-ui text-label-ui text-on-surface">本地持久化同步</span>
+<span class="font-caption text-caption text-on-surface-variant">IndexedDB + LocalStorage (离线正常)</span>
+</div>
+</div>
+<button class="bg-surface-card hover:bg-surface-bright text-primary px-space-sm py-1 rounded shadow-sm font-caption text-caption active:scale-95 transition-transform" onclick="triggerMockSyncToast()" type="button">
+            立即备份
+          </button>
+</div>
+<!-- Study Stat Badges -->
+<div class="grid grid-cols-3 gap-2 text-center">
+<div class="bg-surface-container-low p-2 rounded-lg">
+<span class="font-caption text-caption text-text-muted block">精读句数</span>
+<span class="font-headline-md text-headline-md text-primary">142</span>
+</div>
+<div class="bg-surface-container-low p-2 rounded-lg">
+<span class="font-caption text-caption text-text-muted block">星标难句</span>
+<span class="font-headline-md text-headline-md text-syntax-attribute-fg">28</span>
+</div>
+<div class="bg-surface-container-low p-2 rounded-lg">
+<span class="font-caption text-caption text-text-muted block">长难句掌握</span>
+<span class="font-headline-md text-headline-md text-secondary">86%</span>
+</div>
+</div>
+<!-- Quick Actions inside Menu -->
+<div class="flex flex-col gap-1 pt-1">
+<button class="w-full flex items-center justify-between p-2 rounded hover:bg-surface-container-low transition-colors text-left" onclick="triggerCloudV15Toast()" type="button">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-body-ui text-syntax-adverbial-fg">cloud_upload</span>
+<span class="font-body-secondary text-body-secondary text-on-surface">云端多端同步 (v1.5)</span>
+</div>
+<span class="font-caption text-caption bg-syntax-adverbial-bg text-syntax-adverbial-fg px-1.5 py-0.5 rounded">未解锁</span>
+</button>
+<button class="w-full flex items-center gap-2 p-2 rounded hover:bg-syntax-predicate-bg text-error transition-colors text-left mt-1" onclick="handleMockLogout()" type="button">
+<span class="material-symbols-outlined text-body-ui">logout</span>
+<span class="font-label-ui text-label-ui">退出本地账号</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Tab Switching Logic
+  function switchAuthTab(tab) {
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const tabLogin = document.getElementById('tabLogin');
+    const tabRegister = document.getElementById('tabRegister');
+    const loginFeedback = document.getElementById('loginFeedback');
+    const regFeedback = document.getElementById('regFeedback');
+
+    if (loginFeedback) loginFeedback.classList.add('hidden');
+    if (regFeedback) regFeedback.classList.add('hidden');
+
+    if (tab === 'login') {
+      loginForm.classList.remove('hidden');
+      registerForm.classList.add('hidden');
+      tabLogin.className = 'flex-1 py-1.5 px-space-sm rounded text-center font-label-ui text-label-ui transition-all duration-200 bg-surface-card text-primary shadow-sm';
+      tabRegister.className = 'flex-1 py-1.5 px-space-sm rounded text-center font-label-ui text-label-ui transition-all duration-200 text-on-surface-variant hover:text-on-surface';
+    } else {
+      loginForm.classList.add('hidden');
+      registerForm.classList.remove('hidden');
+      tabRegister.className = 'flex-1 py-1.5 px-space-sm rounded text-center font-label-ui text-label-ui transition-all duration-200 bg-surface-card text-primary shadow-sm';
+      tabLogin.className = 'flex-1 py-1.5 px-space-sm rounded text-center font-label-ui text-label-ui transition-all duration-200 text-on-surface-variant hover:text-on-surface';
+    }
+  }
+
+  // Login Submit Handler
+  function handleLoginSubmit(e) {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value.trim();
+    const pwd = document.getElementById('loginPassword').value;
+    const feedback = document.getElementById('loginFeedback');
+    const feedbackText = document.getElementById('loginFeedbackText');
+
+    if (!email || !pwd || pwd.length < 6) {
+      feedbackText.innerText = '请输入有效邮箱且密码不少于6位';
+      feedback.classList.remove('hidden');
+      return;
+    }
+
+    feedback.classList.add('hidden');
+    // Update active profile
+    const username = email.split('@')[0] || '学术精读者';
+    document.getElementById('activeUserName').innerText = username;
+    document.getElementById('activeUserEmail').innerText = email;
+    document.getElementById('avatarLetter').innerText = username.charAt(0).toUpperCase();
+
+    showLocalToast('登录成功！已载入「' + username + '」的本地研读历史。');
+  }
+
+  // Register Submit Handler
+  function handleRegisterSubmit(e) {
+    e.preventDefault();
+    const email = document.getElementById('regEmail').value.trim();
+    const nickname = document.getElementById('regNickname').value.trim();
+    const pwd = document.getElementById('regPassword').value;
+    const confirmPwd = document.getElementById('regConfirmPassword').value;
+    const feedback = document.getElementById('regFeedback');
+    const feedbackText = document.getElementById('regFeedbackText');
+
+    if (pwd !== confirmPwd) {
+      feedbackText.innerText = '两次密码输入不一致，请重新核对';
+      feedback.classList.remove('hidden');
+      return;
+    }
+
+    if (pwd.length < 6) {
+      feedbackText.innerText = '密码安全长度须大于或等于 6 位';
+      feedback.classList.remove('hidden');
+      return;
+    }
+
+    feedback.classList.add('hidden');
+    const displayName = nickname || email.split('@')[0];
+    
+    // Auto populate preview profile
+    document.getElementById('activeUserName').innerText = displayName;
+    document.getElementById('activeUserEmail').innerText = email;
+    document.getElementById('avatarLetter').innerText = displayName.charAt(0).toUpperCase();
+
+    showLocalToast('注册成功！已为您创建本地独立学习库。');
+    switchAuthTab('login');
+  }
+
+  // Dropdown Toggle
+  let dropdownOpen = true;
+  function toggleDropdownPanel() {
+    const panel = document.getElementById('accountDropdownPanel');
+    const icon = document.getElementById('dropdownIcon');
+    dropdownOpen = !dropdownOpen;
+    if (dropdownOpen) {
+      panel.classList.remove('hidden');
+      icon.style.transform = 'rotate(0deg)';
+    } else {
+      panel.classList.add('hidden');
+      icon.style.transform = 'rotate(180deg)';
+    }
+  }
+
+  // Toast System
+  let toastTimer = null;
+  function showLocalToast(text) {
+    const toast = document.getElementById('syncToast');
+    const msg = document.getElementById('toastMessage');
+    msg.innerText = text;
+    toast.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-2');
+    toast.classList.add('opacity-100', 'translate-y-0');
+
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      toast.classList.remove('opacity-100', 'translate-y-0');
+      toast.classList.add('opacity-0', 'pointer-events-none', '-translate-y-2');
+    }, 2800);
+  }
+
+  function triggerMockSyncToast() {
+    showLocalToast('已快照 142 个分析句子至 LocalStorage 沙盒。');
+  }
+
+  function triggerCloudV15Toast() {
+    showLocalToast('云端多端同步属于 v1.5 规划功能，当前环境完全离线安全。');
+  }
+
+  function handleMockLogout() {
+    document.getElementById('activeUserName').innerText = '游客访客 (离线模式)';
+    document.getElementById('activeUserEmail').innerText = 'guest@local.device';
+    document.getElementById('avatarLetter').innerText = 'G';
+    showLocalToast('已退出当前会话，切回匿名本地访客。');
+  }
+
+  function showLocalNotice(msg) {
+    showLocalToast(msg);
+  }
+</script></main></body></html>

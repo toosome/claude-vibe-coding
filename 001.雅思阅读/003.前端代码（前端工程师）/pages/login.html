@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>登录 · 雅思句子成分精读</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/common.css">
+<style>
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: linear-gradient(135deg, #f8f9ff 0%, #e8daef 50%, #d6eaf8 100%);
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .login-container {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 32px;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
+  }
+  .brand { text-align: center; margin-bottom: 24px; }
+  .brand .logo {
+    font-size: 22px; font-weight: 700;
+    background: linear-gradient(135deg, #003857 0%, #156c3b 100%);
+    -webkit-background-clip: text; background-clip: text;
+    color: transparent;
+    letter-spacing: -0.01em;
+  }
+  .brand .sub { font-size: 13px; color: #41474e; margin-top: 6px; }
+
+  .view-toggle {
+    display: flex;
+    background: #f1f5f9;
+    border-radius: 8px;
+    padding: 3px;
+    margin-bottom: 20px;
+  }
+  .view-toggle button {
+    flex: 1; padding: 8px;
+    border: none; background: transparent;
+    border-radius: 6px;
+    font-size: 13px; color: #41474e;
+    cursor: pointer; font-weight: 500;
+    transition: background 0.15s, color 0.15s;
+  }
+  .view-toggle button.active {
+    background: #fff; color: #0c1d2e; font-weight: 600;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+
+  .form-group { margin-bottom: 14px; }
+  .form-group label {
+    display: block; font-size: 13px; color: #41474e;
+    margin-bottom: 4px; font-weight: 500;
+  }
+  .form-input {
+    width: 100%; padding: 10px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 14px; font-family: inherit;
+    background: #fff; color: #0c1d2e;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .form-input:focus {
+    outline: none;
+    border-color: #003857;
+    box-shadow: 0 0 0 3px rgba(0, 56, 87, 0.1);
+  }
+  .form-input.error { border-color: #ba1a1a; }
+  .form-error {
+    color: #ba1a1a; font-size: 12px;
+    margin-top: 4px; display: none;
+  }
+  .form-error.show { display: block; }
+
+  .btn-block {
+    width: 100%; padding: 12px;
+    font-size: 14px; font-weight: 600;
+    margin-top: 4px;
+    border: none; border-radius: 8px;
+    background: #003857; color: #fff;
+    cursor: pointer;
+  }
+  .btn-block:hover { background: #002a44; }
+
+  .demo-hint {
+    margin-top: 20px; padding: 14px;
+    background: #eff6ff;
+    border: 1px dashed #93c5fd;
+    border-radius: 8px;
+    font-size: 12px; color: #1e40af;
+  }
+  .demo-hint .demo-title {
+    font-weight: 600; margin-bottom: 6px;
+    font-size: 13px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .demo-hint .demo-info {
+    background: rgba(255,255,255,0.7);
+    padding: 8px 10px;
+    border-radius: 6px;
+    margin: 8px 0;
+    font-family: ui-monospace, monospace;
+    font-size: 12px; line-height: 1.6;
+  }
+  .demo-hint .demo-info .k { color: #6b7280; }
+  .demo-hint button {
+    width: 100%; margin-top: 4px; padding: 8px;
+    background: #2563eb; color: #fff;
+    border: none; border-radius: 6px;
+    font-size: 12px; font-weight: 500;
+    cursor: pointer;
+  }
+  .demo-hint button:hover { background: #1d4ed8; }
+
+  .auth-warning {
+    margin-top: 18px; padding: 10px 12px;
+    background: #fef3c7;
+    border-left: 3px solid #f59e0b;
+    border-radius: 0 6px 6px 0;
+    font-size: 12px; color: #78350f; line-height: 1.5;
+  }
+
+  .back-link {
+    text-align: center; margin-top: 16px;
+    font-size: 13px; color: #41474e;
+  }
+  .back-link a {
+    color: #003857; text-decoration: none; font-weight: 600;
+  }
+
+  @media (max-width: 480px) {
+    .login-container { padding: 24px 20px; border-radius: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="login-container">
+  <div class="brand">
+    <div class="logo">雅思句子成分精读</div>
+    <div class="sub">登录后开启个人学习空间</div>
+  </div>
+
+  <div class="view-toggle">
+    <button id="tabLogin" class="active">登录</button>
+    <button id="tabRegister">注册</button>
+  </div>
+
+  <!-- 登录表单 -->
+  <div id="loginView">
+    <div class="form-group">
+      <label for="loginEmail">邮箱</label>
+      <input type="email" id="loginEmail" class="form-input" autocomplete="username" placeholder="you@example.com">
+      <div class="form-error" id="loginEmailErr"></div>
+    </div>
+    <div class="form-group">
+      <label for="loginPassword">密码</label>
+      <input type="password" id="loginPassword" class="form-input" autocomplete="current-password" placeholder="至少 6 位">
+      <div class="form-error" id="loginPasswordErr"></div>
+    </div>
+    <button class="btn-block" id="doLogin">登录</button>
+  </div>
+
+  <!-- 注册表单 -->
+  <div id="registerView" style="display:none">
+    <div class="form-group">
+      <label for="regEmail">邮箱</label>
+      <input type="email" id="regEmail" class="form-input" autocomplete="username" placeholder="you@example.com">
+      <div class="form-error" id="regEmailErr"></div>
+    </div>
+    <div class="form-group">
+      <label for="regNickname">昵称（可选）</label>
+      <input type="text" id="regNickname" class="form-input" autocomplete="nickname" placeholder="留空则使用邮箱前缀">
+      <div class="form-error" id="regNicknameErr"></div>
+    </div>
+    <div class="form-group">
+      <label for="regPassword">密码</label>
+      <input type="password" id="regPassword" class="form-input" autocomplete="new-password" placeholder="至少 6 位">
+      <div class="form-error" id="regPasswordErr"></div>
+    </div>
+    <div class="form-group">
+      <label for="regPassword2">确认密码</label>
+      <input type="password" id="regPassword2" class="form-input" autocomplete="new-password" placeholder="再次输入">
+      <div class="form-error" id="regPassword2Err"></div>
+    </div>
+    <button class="btn-block" id="doRegister">注册</button>
+  </div>
+
+  <div class="demo-hint">
+    <div class="demo-title">💡 Demo 账号（预置，可直接登录）</div>
+    <div class="demo-info">
+      <span class="k">邮箱：</span>demo@example.com<br>
+      <span class="k">密码：</span>demo123
+    </div>
+    <button id="useDemoBtn">使用 Demo 账号登录</button>
+  </div>
+
+  <div class="auth-warning">
+    ⚠️ 本工具为本地演示，账号仅保存在本机浏览器中，密码明文存储，请勿使用与其他重要账号相同的密码。
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ============================================================
+  // 账号体系（与 assets/common.js 的 localStorage key 同步）
+  // ============================================================
+  const LS = { ACCOUNTS: 'ielts-reader-accounts', CURRENT: 'ielts-reader-current-account' };
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  function loadAccounts() {
+    try { const r = localStorage.getItem(LS.ACCOUNTS); return r ? JSON.parse(r) : []; }
+    catch (e) { return []; }
+  }
+  function saveAccounts(arr) {
+    try { localStorage.setItem(LS.ACCOUNTS, JSON.stringify(arr)); } catch (e) {}
+  }
+  function seedDemoIfEmpty() {
+    const arr = loadAccounts();
+    if (arr.length === 0) {
+      arr.push({
+        email: 'demo@example.com', password: 'demo123', nickname: 'Demo 用户',
+        createdAt: new Date().toISOString(), lastLoginAt: new Date().toISOString()
+      });
+      saveAccounts(arr);
+    }
+  }
+  function setCurrent(email) {
+    try {
+      if (email) localStorage.setItem(LS.CURRENT, email);
+      else localStorage.removeItem(LS.CURRENT);
+    } catch (e) {}
+  }
+  function getRedirect() {
+    const m = location.search.match(/[?&]from=([^&]+)/);
+    if (m) return decodeURIComponent(m[1]);
+    return '../index.html';
+  }
+
+  // ============================================================
+  // Tab 切换
+  // ============================================================
+  function showView(view) {
+    document.getElementById('loginView').style.display = view === 'login' ? '' : 'none';
+    document.getElementById('registerView').style.display = view === 'register' ? '' : 'none';
+    document.getElementById('tabLogin').classList.toggle('active', view === 'login');
+    document.getElementById('tabRegister').classList.toggle('active', view === 'register');
+    clearErrors('login'); clearErrors('reg');
+  }
+  function clearErrors(prefix) {
+    ['Email', 'Nickname', 'Password', 'Password2'].forEach(s => {
+      const i = document.getElementById(prefix + s);
+      const e = document.getElementById(prefix + s + 'Err');
+      if (i) i.classList.remove('error');
+      if (e) { e.classList.remove('show'); e.textContent = ''; }
+    });
+  }
+  function setError(prefix, field, msg) {
+    const i = document.getElementById(prefix + field);
+    const e = document.getElementById(prefix + field + 'Err');
+    if (i) i.classList.add('error');
+    if (e) { e.textContent = msg; e.classList.add('show'); }
+  }
+
+  // ============================================================
+  // 登录 / 注册 / Demo 填充
+  // ============================================================
+  function doLogin() {
+    clearErrors('login');
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    let ok = true;
+    if (!EMAIL_RE.test(email)) { setError('login', 'Email', '请输入有效邮箱地址'); ok = false; }
+    if (!password) { setError('login', 'Password', '请输入密码'); ok = false; }
+    if (!ok) return;
+
+    const arr = loadAccounts();
+    const acc = arr.find(a => a.email === email);
+    if (!acc) { setError('login', 'Email', '邮箱未注册'); return; }
+    if (acc.password !== password) { setError('login', 'Password', '密码错误，请重试'); return; }
+
+    acc.lastLoginAt = new Date().toISOString();
+    saveAccounts(arr);
+    setCurrent(acc.email);
+    window.appShowToast && window.appShowToast('登录成功', 'success');
+    setTimeout(() => location.href = getRedirect(), 300);
+  }
+
+  function doRegister() {
+    clearErrors('reg');
+    const email = document.getElementById('regEmail').value.trim();
+    const nickname = document.getElementById('regNickname').value.trim();
+    const password = document.getElementById('regPassword').value;
+    const password2 = document.getElementById('regPassword2').value;
+    let ok = true;
+    if (!EMAIL_RE.test(email)) { setError('reg', 'Email', '请输入有效邮箱地址'); ok = false; }
+    if (password.length < 6) { setError('reg', 'Password', '密码至少 6 位'); ok = false; }
+    if (password !== password2) { setError('reg', 'Password2', '两次输入的密码不一致'); ok = false; }
+    if (!ok) return;
+
+    const arr = loadAccounts();
+    if (arr.some(a => a.email === email)) { setError('reg', 'Email', '该邮箱已注册，请直接登录'); return; }
+
+    const newAcc = {
+      email, password,
+      nickname: nickname || email.split('@')[0],
+      createdAt: new Date().toISOString(),
+      lastLoginAt: new Date().toISOString()
+    };
+    arr.push(newAcc);
+    saveAccounts(arr);
+    setCurrent(email);
+    window.appShowToast && window.appShowToast('注册成功，欢迎回来', 'success');
+    setTimeout(() => location.href = getRedirect(), 300);
+  }
+
+  function useDemo() {
+    document.getElementById('loginEmail').value = 'demo@example.com';
+    document.getElementById('loginPassword').value = 'demo123';
+    clearErrors('login');
+    window.appShowToast && window.appShowToast('已填入 Demo 账号，点「登录」即可', 'info');
+  }
+
+  // ============================================================
+  // 绑定
+  // ============================================================
+  function bind() {
+    document.getElementById('tabLogin').addEventListener('click', () => showView('login'));
+    document.getElementById('tabRegister').addEventListener('click', () => showView('register'));
+    document.getElementById('doLogin').addEventListener('click', doLogin);
+    document.getElementById('doRegister').addEventListener('click', doRegister);
+    document.getElementById('useDemoBtn').addEventListener('click', useDemo);
+    ['loginEmail', 'loginPassword'].forEach(id => {
+      document.getElementById(id).addEventListener('keydown', e => {
+        if (e.key === 'Enter') doLogin();
+      });
+    });
+    ['regEmail', 'regNickname', 'regPassword', 'regPassword2'].forEach(id => {
+      document.getElementById(id).addEventListener('keydown', e => {
+        if (e.key === 'Enter') doRegister();
+      });
+    });
+  }
+
+  // ============================================================
+  // 启动
+  // ============================================================
+  function init() {
+    seedDemoIfEmpty();
+    // 如果已登录，直接跳转回原页或 library
+    try {
+      const cur = localStorage.getItem(LS.CURRENT);
+      if (cur) {
+        const arr = loadAccounts();
+        if (arr.find(a => a.email === cur)) {
+          location.replace(getRedirect());
+          return;
+        }
+      }
+    } catch (e) {}
+    bind();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+
+</body>
+</html>

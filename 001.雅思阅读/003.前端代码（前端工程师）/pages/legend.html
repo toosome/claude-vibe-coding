@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>成分图例 · 雅思句子成分精读</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link rel="stylesheet" href="../assets/common.css">
+<style>
+  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #F1F5F9; color: #0c1d2e; }
+
+  .layout {
+    max-width: 1280px; margin: 0 auto; padding: 24px;
+    display: grid; grid-template-columns: 1fr; gap: 16px;
+  }
+  @media (min-width: 1024px) {
+    .layout { grid-template-columns: 1fr 1fr; }
+  }
+
+  .card {
+    background: #fff; border-radius: 12px;
+    padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .card h2 {
+    font-size: 18px; font-weight: 600; margin-bottom: 4px;
+    color: #0c1d2e;
+  }
+  .card .sub { font-size: 13px; color: #41474e; margin-bottom: 16px; }
+
+  /* PRD §5.3：成分配色（带 fg 文字色） */
+  .legend-list { display: flex; flex-direction: column; gap: 8px; }
+  .legend-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #f1f5f9;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+  }
+  .legend-row:hover { background: #f8fafc; }
+  .legend-row.off { opacity: 0.4; }
+  .legend-row .swatch {
+    width: 36px; height: 28px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .legend-row .info { flex: 1; }
+  .legend-row .info .label { font-size: 14px; font-weight: 600; color: #0c1d2e; }
+  .legend-row .info .en { font-size: 12px; color: #94a3b8; }
+  .legend-row .info .example {
+    font-size: 12px; color: #41474e; margin-top: 2px;
+  }
+  .legend-row .toggle {
+    width: 32px; height: 18px;
+    background: #cbd5e1; border-radius: 999px;
+    position: relative;
+    transition: background 0.15s;
+  }
+  .legend-row .toggle::after {
+    content: ''; position: absolute;
+    top: 2px; left: 2px;
+    width: 14px; height: 14px;
+    background: #fff; border-radius: 50%;
+    transition: transform 0.15s;
+  }
+  .legend-row.on .toggle { background: #003857; }
+  .legend-row.on .toggle::after { transform: translateX(14px); }
+
+  /* 图例分组 */
+  .legend-group {
+    border-top: 1px solid #e2e8f0;
+    padding-top: 16px; margin-top: 16px;
+  }
+  .legend-group:first-of-type { border-top: none; padding-top: 0; margin-top: 0; }
+  .legend-group h3 {
+    font-size: 11px; color: #94a3b8;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    font-weight: 600; margin-bottom: 12px;
+  }
+
+  /* 示例例句 */
+  .example-sentence {
+    background: #f8fafc; border-radius: 8px;
+    padding: 16px; line-height: 2;
+    font-size: 16px; color: #0c1d2e;
+    margin-top: 12px;
+  }
+  .comp-inline { padding: 1px 4px; border-radius: 3px; }
+  .example-controls {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  .example-controls .btn {
+    padding: 6px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background: #fff; cursor: pointer;
+    font-size: 12px;
+  }
+  .example-controls .btn:hover { background: #f1f5f9; }
+  .example-controls .btn.on { background: #003857; color: #fff; border-color: #003857; }
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <!-- 左：成分定义表 -->
+  <div class="card">
+    <h2>成分图例（PRD §5）</h2>
+    <div class="sub">点击切换显示状态；下方例句中实时联动</div>
+
+    <div class="legend-list">
+      <div class="legend-group">
+        <h3>L1 主干成分 · 句子的「骨架」</h3>
+        <div id="leg-skeleton"></div>
+      </div>
+
+      <div class="legend-group">
+        <h3>L2 修饰成分 · 句子的「血肉」</h3>
+        <div id="leg-modifier"></div>
+      </div>
+
+      <div class="legend-group">
+        <h3>L3 从句类型 · 引导词</h3>
+        <div id="leg-clause"></div>
+      </div>
+
+      <div class="legend-group">
+        <h3>L4 短语结构</h3>
+        <div id="leg-phrase"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 右：实时示例 -->
+  <div class="card">
+    <h2>典型长难句拆解</h2>
+    <div class="sub">点击左侧图例项可隐藏/显示对应成分</div>
+
+    <div class="example-sentence" id="exampleSentence">
+      <span class="comp-inline" data-type="S" style="background:#D6EAF8;color:#1B4F72">The rapid expansion of cities</span>,
+      <span class="comp-inline" data-type="Attr" style="background:#FCF3CF;color:#7D6608">which began in the nineteenth century</span>,
+      <span class="comp-inline" data-type="V" style="background:#FADBD8;color:#78281F">has fundamentally altered</span>
+      <span class="comp-inline" data-type="O" style="background:#D5F5E3;color:#196F3D">the way that people live and work</span>.
+    </div>
+
+    <div class="example-controls">
+      <button class="btn on" id="btnAll">全部</button>
+      <button class="btn" id="btnSkeleton">仅骨架</button>
+      <button class="btn" id="btnModifier">仅修饰</button>
+      <button class="btn" id="btnReset">重置</button>
+    </div>
+
+    <div style="margin-top: 16px; padding: 12px 16px; background: #f1f5f9; border-radius: 8px; font-size: 13px; color: #41474e; line-height: 1.7;">
+      <strong>标注规则（PRD §5.2）：</strong><br>
+      ① 主干优先：先划 S/V/O/P/OC；<br>
+      ② 同一词多重语法角色时按最外层功能标注（避免重复高亮）；<br>
+      ③ MVP 仅做扁平标注，从句内部分解留到 V1.1；<br>
+      ④ 引导词（that/which/when）单独标为 Conj。
+    </div>
+  </div>
+</div>
+
+<script src="../assets/common.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  // PRD §5.2 成分定义（按层级分组）
+  const COMPONENTS = [
+    // L1 骨架
+    { group: 'skeleton', type: 'S',  label: '主语',     en: 'Subject',            example: '_The rapid growth of cities_ has changed the landscape.' },
+    { group: 'skeleton', type: 'V',  label: '谓语',     en: 'Predicate Verb',     example: 'Cities _have changed_ dramatically.' },
+    { group: 'skeleton', type: 'O',  label: '宾语',     en: 'Object',             example: 'The study reveals _a clear trend_.' },
+    { group: 'skeleton', type: 'P',  label: '表语',     en: 'Predicative',        example: 'The trend _is obvious_.' },
+    { group: 'skeleton', type: 'OC', label: '宾语补足语', en: 'Object Complement',  example: 'The results made _the theory popular_.' },
+    // L2 修饰
+    { group: 'modifier', type: 'Attr', label: '定语', en: 'Attributive',      example: 'The _urban_ landscape changed.' },
+    { group: 'modifier', type: 'Adv',  label: '状语', en: 'Adverbial',        example: '_Over the past century_, cities changed.' },
+    { group: 'modifier', type: 'App',  label: '同位语', en: 'Appositive',     example: 'Charles Darwin, _the famous naturalist_, ...' },
+    { group: 'modifier', type: 'Par',  label: '插入语', en: 'Parenthetical',  example: 'The result, _however_, was unexpected.' },
+    // L3 从句
+    { group: 'clause',   type: 'Conj', label: '连接词/引导词', en: 'Connective', example: '_that_, _which_, _when_, _because_ ...' },
+    // L4 短语
+    { group: 'phrase',   type: 'Prep', label: '介词短语', en: 'Prepositional Phrase', example: '_in the early 20th century_' },
+    { group: 'phrase',   type: 'Inf',  label: '不定式',   en: 'Infinitive',          example: '_to understand the text_' },
+    { group: 'phrase',   type: 'Ger',  label: '动名词',   en: 'Gerund',              example: '_reading widely_ …' },
+    { group: 'phrase',   type: 'Part', label: '分词',     en: 'Participle',          example: '_driven by demand_' }
+  ];
+
+  // PRD §5.3 配色
+  const COLORS = {
+    S:    { bg: '#D6EAF8', fg: '#1B4F72' },
+    V:    { bg: '#FADBD8', fg: '#78281F' },
+    O:    { bg: '#D5F5E3', fg: '#196F3D' },
+    P:    { bg: '#FDEBD0', fg: '#7E5109' },
+    OC:   { bg: '#D1F2EB', fg: '#117864' },
+    Attr: { bg: '#FCF3CF', fg: '#7D6608' },
+    Adv:  { bg: '#E8DAEF', fg: '#512E5F' },
+    App:  { bg: '#FADBD8', fg: '#78281F' },
+    Par:  { bg: '#F2D7D5', fg: '#7D2C22' },
+    Conj: { bg: '#E5E7E9', fg: '#475569' },
+    Prep: { bg: 'transparent', fg: '#475569', dashed: true },
+    Inf:  { bg: '#D6DBFA', fg: '#1E3A8A' },
+    Ger:  { bg: '#D6DBFA', fg: '#1E3A8A' },
+    Part: { bg: '#D6DBFA', fg: '#1E3A8A' }
+  };
+
+  const state = {
+    disabled: new Set(),
+    skeletonOnly: false
+  };
+
+  function renderLegendGroups() {
+    const groups = ['skeleton', 'modifier', 'clause', 'phrase'];
+    groups.forEach(g => {
+      const root = document.getElementById('leg-' + g);
+      if (!root) return;
+      root.innerHTML = '';
+      COMPONENTS.filter(c => c.group === g).forEach(c => {
+        const col = COLORS[c.type];
+        const row = document.createElement('div');
+        row.className = 'legend-row on';
+        row.dataset.type = c.type;
+        row.innerHTML = `
+          <div class="swatch" style="background:${col.bg};color:${col.fg};${col.dashed ? 'border:1px dashed #94a3b8;' : ''}">${c.type}</div>
+          <div class="info">
+            <div class="label">${c.label} <span style="color:#94a3b8;font-weight:400">· ${c.en}</span></div>
+            <div class="example">${c.example.replace(/_/g, '')}</div>
+          </div>
+          <div class="toggle"></div>
+        `;
+        row.addEventListener('click', () => {
+          if (state.disabled.has(c.type)) {
+            state.disabled.delete(c.type);
+            row.classList.remove('off');
+            row.classList.add('on');
+          } else {
+            state.disabled.add(c.type);
+            row.classList.add('off');
+            row.classList.remove('on');
+          }
+          updateExample();
+        });
+        root.appendChild(row);
+      });
+    });
+  }
+
+  function updateExample() {
+    document.querySelectorAll('.comp-inline').forEach(el => {
+      const t = el.dataset.type;
+      if (state.disabled.has(t)) {
+        el.style.background = 'transparent';
+        el.style.color = '#475569';
+      } else {
+        const col = COLORS[t];
+        el.style.background = col.bg;
+        el.style.color = col.fg;
+        if (col.dashed) el.style.borderBottom = '1px dashed #6b7280';
+      }
+    });
+  }
+
+  function bindFilterButtons() {
+    const allTypes = COMPONENTS.map(c => c.type);
+    const skeletonTypes = COMPONENTS.filter(c => c.group === 'skeleton').map(c => c.type);
+    const modifierTypes = COMPONENTS.filter(c => c.group === 'modifier').map(c => c.type);
+
+    document.getElementById('btnAll').addEventListener('click', () => {
+      state.disabled.clear();
+      syncLegendRows();
+      updateExample();
+      setActive('btnAll');
+    });
+    document.getElementById('btnSkeleton').addEventListener('click', () => {
+      state.disabled = new Set(allTypes.filter(t => !skeletonTypes.includes(t)));
+      syncLegendRows();
+      updateExample();
+      setActive('btnSkeleton');
+    });
+    document.getElementById('btnModifier').addEventListener('click', () => {
+      state.disabled = new Set(skeletonTypes);
+      syncLegendRows();
+      updateExample();
+      setActive('btnModifier');
+    });
+    document.getElementById('btnReset').addEventListener('click', () => {
+      state.disabled.clear();
+      syncLegendRows();
+      updateExample();
+      setActive('btnAll');
+    });
+
+    function setActive(id) {
+      ['btnAll', 'btnSkeleton', 'btnModifier', 'btnReset'].forEach(b => {
+        document.getElementById(b).classList.toggle('on', b === id);
+      });
+    }
+  }
+
+  function syncLegendRows() {
+    document.querySelectorAll('.legend-row').forEach(row => {
+      const t = row.dataset.type;
+      if (state.disabled.has(t)) {
+        row.classList.add('off');
+        row.classList.remove('on');
+      } else {
+        row.classList.remove('off');
+        row.classList.add('on');
+      }
+    });
+  }
+
+  renderLegendGroups();
+  bindFilterButtons();
+})();
+</script>
+
+</body>
+</html>

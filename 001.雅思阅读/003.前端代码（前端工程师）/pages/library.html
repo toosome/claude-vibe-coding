@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>文章库 · 雅思句子成分精读</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link rel="stylesheet" href="../assets/common.css">
+<style>
+  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #F1F5F9; color: #0c1d2e; }
+
+  .page-header {
+    max-width: 1280px; margin: 0 auto; padding: 24px 24px 16px;
+  }
+  .page-header h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+  .page-header p { color: #41474e; font-size: 14px; }
+
+  .filters {
+    max-width: 1280px; margin: 0 auto; padding: 0 24px 16px;
+    display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+  }
+  .filter-chip {
+    padding: 6px 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 999px;
+    background: #fff;
+    font-size: 13px; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .filter-chip:hover { border-color: #003857; color: #003857; }
+  .filter-chip.active { background: #003857; color: #fff; border-color: #003857; }
+
+  .grid {
+    max-width: 1280px; margin: 0 auto; padding: 0 24px 32px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .article-card {
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    padding: 20px;
+    transition: transform 0.15s, box-shadow 0.15s;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+  .article-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.08);
+    border-color: #c1c7cf;
+  }
+  .article-card .meta {
+    display: flex; gap: 8px; align-items: center;
+    font-size: 11px; color: #94a3b8; font-weight: 600;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .article-card .meta .badge {
+    background: #003857; color: #fff;
+    padding: 2px 8px; border-radius: 4px;
+    font-size: 10px;
+  }
+  .article-card .meta .badge.demo { background: #156c3b; }
+  .article-card h3 {
+    font-size: 17px; font-weight: 600; line-height: 1.4;
+    color: #0c1d2e; margin-bottom: 6px;
+  }
+  .article-card .subtitle {
+    font-size: 13px; color: #41474e;
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+  .article-card .stats {
+    display: flex; gap: 12px;
+    font-size: 12px; color: #94a3b8;
+    padding-top: 12px; border-top: 1px solid #f1f5f9;
+  }
+  .article-card .stats .stat { display: flex; align-items: center; gap: 4px; }
+  .article-card .progress-bar {
+    height: 4px; background: #f1f5f9; border-radius: 999px;
+    margin-top: 8px; overflow: hidden;
+  }
+  .article-card .progress-bar .fill {
+    height: 100%; background: #156c3b;
+    border-radius: 999px;
+  }
+  .article-card .empty {
+    font-size: 11px; color: #94a3b8; margin-top: 4px;
+  }
+  .empty-state {
+    text-align: center; padding: 60px 20px;
+    color: #94a3b8;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>文章库</h1>
+  <p>从预置题源中选一篇开始精读，或导入你自己的文章（v1.5 上线）</p>
+</div>
+
+<div class="filters">
+  <span style="font-size: 13px; color: #41474e">难度：</span>
+  <button class="filter-chip active" data-filter="all">全部</button>
+  <button class="filter-chip" data-filter="easy">入门</button>
+  <button class="filter-chip" data-filter="medium">标准</button>
+  <button class="filter-chip" data-filter="hard">高难</button>
+  <span style="font-size: 13px; color: #41474e; margin-left: 16px">题材：</span>
+  <button class="filter-chip active" data-genre="all">全部</button>
+  <button class="filter-chip" data-genre="social">社会</button>
+  <button class="filter-chip" data-genre="nature">自然</button>
+  <button class="filter-chip" data-genre="tech">科技</button>
+</div>
+
+<div class="grid" id="articleGrid">
+  <!-- 由 JS 渲染 -->
+</div>
+
+<script src="../assets/common.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  const ARTICLES = [
+    {
+      id: 'urban-agri',
+      badge: 'DEMO',
+      badgeClass: 'demo',
+      source: '自撰 · IELTS 风格',
+      difficulty: 'easy',
+      genre: 'social',
+      title: '城市农业与食品安全',
+      subtitle: '城市垂直农场与食物系统韧性评估 · 长难句结构解析',
+      sentences: 10,
+      estTime: 8,
+      progress: 0
+    },
+    {
+      id: 'c18-t1-p1',
+      badge: 'C18',
+      source: 'Cambridge IELTS 18 · Test 1 · Passage 1',
+      difficulty: 'medium',
+      genre: 'social',
+      title: 'Urban Agriculture & Food Systems',
+      subtitle: '题型涉及 List of Headings 与复杂主谓长难句定位',
+      sentences: 12,
+      estTime: 10,
+      progress: 40
+    },
+    {
+      id: 'c18-t2-p1',
+      badge: 'C18',
+      source: 'Cambridge IELTS 18 · Test 2 · Passage 1',
+      difficulty: 'medium',
+      genre: 'nature',
+      title: 'The Mystery of Bird Migration',
+      subtitle: '鸟类迁徙的导航机制 · 含状语从句嵌套分析',
+      sentences: 11,
+      estTime: 9,
+      progress: 0
+    },
+    {
+      id: 'c17-t3-p2',
+      badge: 'C17',
+      source: 'Cambridge IELTS 17 · Test 3 · Passage 2',
+      difficulty: 'hard',
+      genre: 'tech',
+      title: 'The History of Artificial Intelligence',
+      subtitle: 'AI 发展史中的非谓语动词与同位语结构',
+      sentences: 13,
+      estTime: 12,
+      progress: 0
+    },
+    {
+      id: 'c16-t4-p1',
+      badge: 'C16',
+      source: 'Cambridge IELTS 16 · Test 4 · Passage 1',
+      difficulty: 'hard',
+      genre: 'social',
+      title: 'The Psychology of Consumer Behavior',
+      subtitle: '消费行为的心理学基础 · 含 that/which 从句辨析',
+      sentences: 14,
+      estTime: 13,
+      progress: 0
+    },
+    {
+      id: 'c15-t1-p3',
+      badge: 'C15',
+      source: 'Cambridge IELTS 15 · Test 1 · Passage 3',
+      difficulty: 'medium',
+      genre: 'nature',
+      title: 'Coral Reef Ecosystems Under Threat',
+      subtitle: '珊瑚礁生态系统的多重威胁 · 含介词短语结构',
+      sentences: 11,
+      estTime: 9,
+      progress: 0
+    }
+  ];
+
+  // 难度 / 题材过滤
+  let curDifficulty = 'all';
+  let curGenre = 'all';
+
+  function render() {
+    const grid = document.getElementById('articleGrid');
+    const filtered = ARTICLES.filter(a =>
+      (curDifficulty === 'all' || a.difficulty === curDifficulty) &&
+      (curGenre === 'all' || a.genre === curGenre)
+    );
+    if (filtered.length === 0) {
+      grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">没有匹配的文章</div>';
+      return;
+    }
+    grid.innerHTML = filtered.map(a => `
+      <a href="practice.html?article=${a.id}" class="article-card">
+        <div class="meta">
+          <span class="badge ${a.badgeClass || ''}">${a.badge}</span>
+          <span>${a.source}</span>
+        </div>
+        <h3>${a.title}</h3>
+        <p class="subtitle">${a.subtitle}</p>
+        ${a.progress > 0 ? `
+          <div class="progress-bar"><div class="fill" style="width:${a.progress}%"></div></div>
+          <div class="empty">已读 ${a.progress}% · 继续</div>
+        ` : `
+          <div class="empty">${a.sentences} 句 · 约 ${a.estTime} 分钟</div>
+        `}
+      </a>
+    `).join('');
+  }
+
+  function bindFilters() {
+    document.querySelectorAll('[data-filter]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        curDifficulty = btn.dataset.filter;
+        render();
+      });
+    });
+    document.querySelectorAll('[data-genre]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-genre]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        curGenre = btn.dataset.genre;
+        render();
+      });
+    });
+  }
+
+  // 顶栏当前页标记（由 common.js 处理），但这里需要强制标记「文章库」
+  // common.js 通过 URL pathname 推断；本页面是 library.html，已自动识别
+  render();
+  bindFilters();
+})();
+</script>
+
+</body>
+</html>

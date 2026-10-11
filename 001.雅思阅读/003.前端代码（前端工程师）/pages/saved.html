@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我的难句 · 雅思句子成分精读</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/common.css">
+<style>
+  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #F1F5F9; color: #0c1d2e; }
+
+  .page-header {
+    max-width: 1280px; margin: 0 auto; padding: 24px 24px 16px;
+    display: flex; justify-content: space-between; align-items: end;
+    flex-wrap: wrap; gap: 12px;
+  }
+  .page-header h1 { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+  .page-header p { color: #41474e; font-size: 14px; }
+
+  .stats-row {
+    max-width: 1280px; margin: 0 auto; padding: 0 24px 16px;
+    display: flex; gap: 12px; flex-wrap: wrap;
+  }
+  .stat-card {
+    background: #fff; border-radius: 12px;
+    padding: 16px 20px; flex: 1; min-width: 160px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .stat-card .label {
+    font-size: 11px; color: #94a3b8;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    font-weight: 600; margin-bottom: 6px;
+  }
+  .stat-card .value {
+    font-size: 24px; font-weight: 700; color: #003857;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-card .delta {
+    font-size: 12px; color: #156c3b; margin-top: 2px;
+  }
+
+  .layout {
+    max-width: 1280px; margin: 0 auto; padding: 0 24px 32px;
+  }
+
+  .filter-bar {
+    display: flex; gap: 8px; margin-bottom: 16px;
+    flex-wrap: wrap; align-items: center;
+  }
+  .filter-bar .label { font-size: 13px; color: #41474e; }
+  .filter-chip {
+    padding: 6px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 999px;
+    background: #fff; font-size: 12px;
+    cursor: pointer;
+  }
+  .filter-chip:hover { border-color: #003857; color: #003857; }
+  .filter-chip.active { background: #003857; color: #fff; border-color: #003857; }
+
+  .sentences-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  @media (min-width: 768px) {
+    .sentences-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .saved-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    border: 1px solid #e2e8f0;
+    position: relative;
+    cursor: pointer;
+    transition: box-shadow 0.15s, transform 0.15s;
+  }
+  .saved-card:hover {
+    box-shadow: 0 6px 20px -4px rgba(15,23,42,0.08);
+    transform: translateY(-1px);
+  }
+  .saved-card .actions {
+    position: absolute; top: 12px; right: 12px;
+    display: flex; gap: 4px;
+  }
+  .saved-card .action-btn {
+    width: 28px; height: 28px;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    transition: background 0.15s;
+  }
+  .saved-card .action-btn:hover { background: #f1f5f9; }
+  .saved-card .action-btn.unstar { color: #f59e0b; }
+
+  .saved-card .meta {
+    display: flex; gap: 6px; align-items: center;
+    font-size: 11px; color: #94a3b8; margin-bottom: 8px;
+    padding-right: 80px;
+  }
+  .saved-card .badge {
+    background: #003857; color: #fff;
+    padding: 2px 6px; border-radius: 4px; font-size: 10px;
+  }
+  .saved-card .badge.demo { background: #156c3b; }
+  .saved-card .text {
+    font-size: 16px; line-height: 1.7;
+    color: #0c1d2e; margin-bottom: 10px;
+  }
+  .saved-card .text .comp { padding: 1px 4px; border-radius: 3px; }
+  .saved-card .translation {
+    font-size: 13px; color: #41474e;
+    padding: 8px 12px;
+    background: #f8fafc;
+    border-left: 3px solid #E8DAEF;
+    border-radius: 0 6px 6px 0;
+    margin-top: 8px;
+  }
+
+  .empty-state {
+    text-align: center; padding: 80px 20px;
+    background: #fff; border-radius: 12px;
+    color: #94a3b8;
+  }
+  .empty-state .icon { font-size: 48px; margin-bottom: 16px; opacity: 0.4; }
+  .empty-state h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; color: #41474e; }
+  .empty-state p { font-size: 14px; margin-bottom: 16px; }
+  .empty-state a {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #003857; color: #fff;
+    border-radius: 8px; text-decoration: none; font-size: 13px;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div>
+    <h1>⭐ 我的难句</h1>
+    <p>在精读工作台点击句尾 ☆ 即可收藏；这里集中复习</p>
+  </div>
+</div>
+
+<div class="stats-row">
+  <div class="stat-card">
+    <div class="label">已收藏</div>
+    <div class="value" id="totalCount">0</div>
+    <div class="delta">句</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">本篇来源</div>
+    <div class="value" style="font-size: 14px; line-height: 1.5">DEMO 文章</div>
+    <div class="delta">城市农业与食品安全</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">复习建议</div>
+    <div class="value" style="font-size: 13px; line-height: 1.6; font-weight: 400; color: #41474e;">
+      隔天复习一次<br>
+      重点看成分划分
+    </div>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="filter-bar">
+    <span class="label">筛选：</span>
+    <button class="filter-chip active" data-filter="all">全部</button>
+    <button class="filter-chip" data-filter="recent">最近收藏</button>
+    <button class="filter-chip" data-filter="old">最早收藏</button>
+    <span style="margin-left: 16px; font-size: 13px; color: #41474e">操作：</span>
+    <button class="filter-chip" id="btnClearAll" style="border-color:#ef4444;color:#ef4444">清空全部</button>
+  </div>
+
+  <div class="sentences-grid" id="savedGrid">
+    <!-- 由 JS 渲染 -->
+  </div>
+</div>
+
+<script src="../assets/common.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  // 收藏数据来自 localStorage（与 practice.html 共享 key：ielts-reader-favs）
+  // 收藏项存的是句子 text 字符串；为展示用，这里维护一个 text → 元数据 的映射
+  const SENTENCE_META = {
+    'Urban agriculture, which involves cultivating food within city limits, has attracted considerable interest in recent years.': {
+      badge: 'DEMO', badgeClass: 'demo', article: '城市农业与食品安全',
+      translation: '城市农业，即在城市范围内种植食物，近年来引起了相当大的关注。',
+      types: ['S', 'Attr', 'V', 'O', 'Adv']
+    },
+    'Supporters argue that growing food locally can substantially reduce the carbon footprint of long-distance transportation.': {
+      badge: 'DEMO', badgeClass: 'demo', article: '城市农业与食品安全',
+      translation: '支持者认为，本地种植食物能大幅减少长途运输的碳足迹。',
+      types: ['S', 'V', 'O']
+    },
+    'Critics, however, point out that agricultural activities may compete with residential development for limited urban land.': {
+      badge: 'DEMO', badgeClass: 'demo', article: '城市农业与食品安全',
+      translation: '然而，批评者指出，农业活动可能会与住宅开发争夺有限的城市土地。',
+      types: ['Par', 'S', 'V', 'O']
+    },
+    'Some cities have therefore introduced strict regulations to ensure that urban farming remains safe and sustainable.': {
+      badge: 'DEMO', badgeClass: 'demo', article: '城市农业与食品安全',
+      translation: '因此，一些城市出台了严格的法规，以确保城市农业保持安全与可持续。',
+      types: ['Adv', 'S', 'V', 'O']
+    },
+    'Singapore, for example, has invested heavily in vertical farms that use hydroponic technology to produce crops efficiently.': {
+      badge: 'DEMO', badgeClass: 'demo', article: '城市农业与食品安全',
+      translation: '例如，新加坡已大力投资于采用水培技术高效生产作物的垂直农场。',
+      types: ['Par', 'S', 'V', 'Adv']
+    },
+    'These innovative systems, which can operate year-round regardless of weather, demonstrate the potential of technology-driven agriculture.': {
+      badge: 'DEMO', badgeClass: 'demo', article: '城市农业与食品安全',
+      translation: '这些创新系统无论天气如何都能全年运作，展现了技术驱动型农业的潜力。',
+      types: ['S', 'Attr', 'V', 'O']
+    },
+    'Soil contamination from previous industrial use also raises serious concerns about food safety.': {
+      badge: 'DEMO', badgeClass: 'demo', article: '城市农业与食品安全',
+      translation: '先前工业用途造成的土壤污染也引发了人们对食品安全的严重担忧。',
+      types: ['S', 'V', 'O']
+    },
+    'Additionally, community gardens provide urban residents with direct access to fresh, nutritious produce.': {
+      badge: 'DEMO', badgeClass: 'demo', article: '城市农业与食品安全',
+      translation: '此外，社区花园为城市居民提供了直接获取新鲜营养农产品的渠道。',
+      types: ['Adv', 'S', 'V', 'O']
+    },
+    'If governments continue to support such innovations, urban agriculture may well play a central role in future food systems.': {
+      badge: 'DEMO', badgeClass: 'demo', article: '城市农业与食品安全',
+      translation: '如果各国政府继续支持此类创新，城市农业很可能在未来食物系统中扮演核心角色。',
+      types: ['Adv', 'S', 'V', 'O']
+    }
+  };
+
+  // 成分配色
+  const COLORS = {
+    S: '#D6EAF8', V: '#FADBD8', O: '#D5F5E3', P: '#FDEBD0', OC: '#D1F2EB',
+    Attr: '#FCF3CF', Adv: '#E8DAEF', App: '#FADBD8', Par: '#F2D7D5',
+    Conj: '#E5E7E9', Prep: 'transparent', Inf: '#D6DBFA', Ger: '#D6DBFA', Part: '#D6DBFA'
+  };
+
+  const LS_FAVS = 'ielts-reader-favs';
+  let curFilter = 'all';
+
+  function loadFavs() {
+    try { return new Set(JSON.parse(localStorage.getItem(LS_FAVS) || '[]')); }
+    catch (e) { return new Set(); }
+  }
+  function saveFavs(set) {
+    try { localStorage.setItem(LS_FAVS, JSON.stringify(Array.from(set))); } catch (e) {}
+  }
+  function unstar(text) {
+    const favs = loadFavs();
+    favs.delete(text);
+    saveFavs(favs);
+    render();
+  }
+  function clearAll() {
+    if (!confirm('确定清空所有收藏？此操作不可撤销')) return;
+    saveFavs(new Set());
+    render();
+  }
+
+  function render() {
+    const favs = loadFavs();
+    document.getElementById('totalCount').textContent = favs.size;
+
+    const list = Array.from(favs);
+    // 模拟收藏时间顺序：当前 localStorage 存的是数组，按下标倒序 = 最近
+    if (curFilter === 'recent') list.reverse();
+
+    const grid = document.getElementById('savedGrid');
+    if (list.length === 0) {
+      grid.innerHTML = `
+        <div class="empty-state" style="grid-column:1/-1">
+          <div class="icon">⭐</div>
+          <h3>暂无收藏</h3>
+          <p>在精读工作台点击句尾的 ☆ 即可收藏到这里</p>
+          <a href="practice.html">前往精读工作台</a>
+        </div>`;
+      return;
+    }
+
+    grid.innerHTML = list.map(text => {
+      const meta = SENTENCE_META[text] || { badge: '?', article: '未知来源', translation: '', types: [] };
+      const compsHtml = meta.types.map(t =>
+        `<span class="comp" style="background:${COLORS[t]}">${COLORS[t] === 'transparent' ? `<u>${text}</u>` : ''}</span>`
+      ).join('');
+      return `
+        <div class="saved-card">
+          <div class="actions">
+            <button class="action-btn unstar" data-action="unstar" data-text="${encodeURIComponent(text)}" title="取消收藏">★</button>
+            <button class="action-btn" data-action="practice" data-text="${encodeURIComponent(text)}" title="回到精读">↗</button>
+          </div>
+          <div class="meta">
+            <span class="badge ${meta.badgeClass || ''}">${meta.badge}</span>
+            <span>${meta.article}</span>
+          </div>
+          <div class="text">${text}</div>
+          ${meta.translation ? `<div class="translation">${meta.translation}</div>` : ''}
+        </div>
+      `;
+    }).join('');
+
+    grid.querySelectorAll('.action-btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        const text = decodeURIComponent(btn.dataset.text);
+        if (btn.dataset.action === 'unstar') unstar(text);
+        else if (btn.dataset.action === 'practice') {
+          location.href = 'practice.html';
+        }
+      });
+    });
+    grid.querySelectorAll('.saved-card').forEach(card => {
+      card.addEventListener('click', () => location.href = 'practice.html');
+    });
+  }
+
+  document.querySelectorAll('[data-filter]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      curFilter = btn.dataset.filter;
+      render();
+    });
+  });
+  document.getElementById('btnClearAll').addEventListener('click', clearAll);
+
+  render();
+})();
+</script>
+
+</body>
+</html>

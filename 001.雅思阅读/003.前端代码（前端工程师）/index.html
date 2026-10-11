@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>雅思句子成分精读 · IELTS Sentence Reader</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/common.css">
+<style>
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: linear-gradient(135deg, #f8f9ff 0%, #eef4ff 100%);
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    color: #0c1d2e;
+  }
+  .splash {
+    text-align: center;
+    padding: 32px;
+  }
+  .splash .logo {
+    width: 64px; height: 64px;
+    margin: 0 auto 20px;
+    border-radius: 16px;
+    background: #003857; color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px; font-weight: 700;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+  .splash h1 {
+    font-size: 24px; font-weight: 700; margin-bottom: 8px;
+  }
+  .splash p {
+    font-size: 14px; color: #41474e; margin-bottom: 24px;
+  }
+  .splash .spinner {
+    width: 28px; height: 28px;
+    border: 3px solid #e2e8f0;
+    border-top-color: #003857;
+    border-radius: 50%;
+    margin: 0 auto;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="splash">
+  <div class="logo">雅</div>
+  <h1>雅思句子成分精读</h1>
+  <p>正在进入学习空间…</p>
+  <div class="spinner"></div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  // 入口页：根据登录态决定去向
+  // - 已登录 → library
+  // - 未登录 → login
+  function bootstrap() {
+    try {
+      const email = localStorage.getItem('ielts-reader-current-account');
+      if (email) {
+        const accounts = JSON.parse(localStorage.getItem('ielts-reader-accounts') || '[]');
+        if (accounts.find(a => a.email === email)) {
+          location.replace('pages/library.html');
+          return;
+        }
+      }
+    } catch (e) {}
+    location.replace('pages/login.html');
+  }
+  // 给用户一点点时间看到 splash，再跳转
+  setTimeout(bootstrap, 600);
+})();
+</script>
+</body>
+</html>

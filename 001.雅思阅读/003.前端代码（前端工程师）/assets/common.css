@@ -1,0 +1,174 @@
+/* ============================================================
+   雅思句子成分精读 · 共享样式
+   加载顺序：Tailwind CDN → common.css → 页面内联样式
+============================================================ */
+
+:root {
+  /* 与 design-tokens.md 同步（Tailwind 已用 JS 配置，这里只放非 Tailwind 变量） */
+  --shadow-level-1: 0 1px 8px rgba(0,0,0,0.04);
+  --shadow-level-2: 0 4px 16px -2px rgba(15,23,42,0.08);
+  --shadow-level-3: 0 12px 32px -4px rgba(15,23,42,0.16);
+  --blur-chrome:   blur(12px);
+  --max-reading-width: 720px;
+  --side-panel-width: 280px;
+}
+
+html, body { margin: 0; padding: 0; }
+body { overscroll-behavior: none; }
+
+/* Top nav (由 common.js 注入) */
+.app-topnav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 40;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: var(--blur-chrome);
+  -webkit-backdrop-filter: var(--blur-chrome);
+  box-shadow: var(--shadow-level-1);
+  border-bottom: 1px solid var(--border-subtle, #E2E8F0);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+.app-topnav .inner {
+  height: 64px;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.app-topnav .brand {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none; color: inherit;
+  font-weight: 600; font-size: 15px;
+}
+.app-topnav .brand .logo {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: var(--primary, #003857);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700;
+}
+.app-topnav nav {
+  display: flex; gap: 4px;
+  background: rgba(241, 245, 249, 0.7);
+  padding: 4px; border-radius: 12px;
+}
+.app-topnav nav a {
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 13px; font-weight: 600;
+  color: #41474e;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.app-topnav nav a:hover { color: #0c1d2e; }
+.app-topnav nav a.active {
+  background: #1b4f72; color: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.app-topnav .account {
+  display: flex; align-items: center; gap: 10px;
+}
+.app-topnav .account .email-label {
+  font-size: 13px; color: #41474e;
+  max-width: 180px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.app-topnav .account .avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--primary, #003857);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700;
+  cursor: pointer;
+}
+.app-topnav .account .dropdown {
+  position: absolute;
+  top: calc(100% + 8px); right: 24px;
+  background: #fff;
+  border: 1px solid var(--border-subtle, #E2E8F0);
+  border-radius: 10px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+  min-width: 220px;
+  padding: 8px 0;
+  z-index: 50;
+  font-size: 13px;
+  display: none;
+}
+.app-topnav .account .dropdown.show { display: block; }
+.app-topnav .account .dropdown-header {
+  padding: 10px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #0c1d2e;
+  font-weight: 600;
+  word-break: break-all;
+}
+.app-topnav .account .dropdown-item {
+  padding: 10px 14px;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 8px;
+  color: #0c1d2e;
+}
+.app-topnav .account .dropdown-item:hover { background: #f8fafc; }
+.app-topnav .account .dropdown-item.disabled { color: #94a3b8; cursor: default; }
+.app-topnav .account .dropdown-item .badge {
+  margin-left: auto;
+  font-size: 11px; color: #94a3b8;
+  background: #f1f5f9; padding: 2px 6px; border-radius: 4px;
+}
+.app-topnav .login-btn {
+  padding: 7px 18px;
+  border-radius: 999px;
+  background: var(--primary, #003857);
+  color: #fff;
+  border: none;
+  font-size: 13px; font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+}
+.app-topnav .login-btn:hover { background: #002a44; }
+
+/* 主内容下移，避免被 fixed top nav 遮挡 */
+.app-main { padding-top: 80px; }
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .app-topnav .inner { padding: 0 12px; height: 56px; }
+  .app-topnav nav { display: none; }     /* 移动端用底部 TabBar（见 .app-bottomnav）*/
+  .app-topnav .account .email-label { display: none; }
+  .app-main { padding-top: 64px; padding-bottom: 72px; }
+}
+
+/* 移动端底部 TabBar（由 common.js 注入） */
+.app-bottomnav {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 40;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: var(--blur-chrome);
+  -webkit-backdrop-filter: var(--blur-chrome);
+  border-top: 1px solid var(--border-subtle, #E2E8F0);
+  padding: 6px 0 calc(env(safe-area-inset-bottom, 0px) + 6px);
+}
+@media (max-width: 768px) {
+  .app-bottomnav { display: flex; justify-content: space-around; }
+}
+.app-bottomnav a {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 4px 8px;
+  font-size: 11px;
+  color: #94a3b8;
+  text-decoration: none;
+  flex: 1;
+}
+.app-bottomnav a.active { color: var(--primary, #003857); font-weight: 600; }
+.app-bottomnav a .icon {
+  width: 22px; height: 22px;
+  display: flex; align-items: center; justify-content: center;
+}
