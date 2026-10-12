@@ -1,0 +1,20 @@
+# --- 截图（自动生成）---
+**/screen.png
+**/screenshots/
+
+# --- 临时 / 试验 ---
+TEMP.*/
+test_screenshots/
+
+# --- 压缩包（源码包，已解包到同名目录）---
+*.zip
+
+# --- 通用 ---
+.DS_Store
+Thumbs.db
+*.tmp
+*.log
+.vscode/
+.idea/
+node_modules/
+__pycache__/
